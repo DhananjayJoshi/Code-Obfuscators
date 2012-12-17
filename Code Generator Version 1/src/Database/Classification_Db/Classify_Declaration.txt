@@ -1,0 +1,14 @@
+variable
+identifier
+identifiers
+variables
+int
+float
+char 
+boolean
+double
+byte 
+short 
+long
+integer
+character

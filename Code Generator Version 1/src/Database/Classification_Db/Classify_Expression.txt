@@ -1,0 +1,21 @@
+assign
+equal to
+plus
+minus
+subtract
+into
+multiply
+multiplication
+addition
+add
+subtracation
+divide
+division
+less than
+greater than
+less than equal to
+greater than equal to
+not equal to
+initialize
+call
+invoke
