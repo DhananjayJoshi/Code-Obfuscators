@@ -37,8 +37,7 @@ public class LoopHandler {
 	
 	private void readFile(String fileName){
 		String token = null;
-		words.removeAllElements();
-		
+		words.removeAllElements();		
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
 			while((token = br.readLine()) != null){
@@ -188,44 +187,18 @@ public class LoopHandler {
 		
 		while(true){
 			if((v = Controller.varSym.searchSymbol(tokens[tIndex])) != null) /*|| (f = Controller.funSym.searchSymbol(tokens[tIndex])) != null*/{
-				/*expString = tokens[tIndex];
-				tIndex++;
-				if(tokens[tIndex].equalsIgnoreCase("from"))
-					tokens[tIndex] = "equal to";
-				tempStr = searchOperator(tIndex);
-				if(tempStr != null){ 				// If next token is operator
-					expString = " " + tempStr;
-					flag = true;
-					while(true){
-						//index = tIndex;
-						if((tempStr = searchOperator(tIndex)) != null){
-							flag = true;
-							expString = " " + tempStr;	// Note: tIndex automatically incremented by searchOperator() method
-						}
-						else
-						if(Controller.varSym.searchSymbol(tokens[tIndex])!= null || Controller.funSym.searchSymbol(tokens[tIndex]) != null){
-							if(flag == true){
-								flag = false;								
-								expString += " " + tokens[tIndex];
-								tIndex++;
-							}
-							else
-								break;
-						}
-						else
-							break;
-					}*/
-					loopCounter = v.getVarName();		// Holds the loopCounter variable
-					expString = searchExpression();
-					expression = exp.generateExpression(expString);	
-					tempVar = v;
-				//}
+				loopCounter = v.getVarName();		// Holds the loopCounter variable
+				expString = searchExpression();
+				expression = exp.generateExpression(expString);	
+				tempVar = v;
 			}			
 			else
 			if(tokens[tIndex].equalsIgnoreCase("to")){								// If next token is not an operator
 				loopParams[0] = expression;
 				tIndex++;
-				if((tempStr = String.valueOf(toNumber(tokens[tIndex])))){			// TODO Method 'toNumber()' to be added later
+				int tempNum = NumberGenerator.stringToNum(tokens[tIndex]);
+				//if((tempStr = String.valueOf(toNumber(tokens[tIndex++])))){			// TODO Method 'toNumber()' to be added later
+				if(String.valueOf(tempNum) != null){
 					condition = tempStr;
 					loopParams[1] = loopCounter + "<" + condition;
 				}
@@ -277,6 +250,7 @@ public class LoopHandler {
 		code.setErrParam(null);
 	}
 	
+	// While loop handles the basic cases like declare while loop for i<10, iterate until i less than ten and j less than 20
 	private void while_loop(){
 		VarSymbol v = null;
 		FuncSymbol f = null;
@@ -290,7 +264,10 @@ public class LoopHandler {
 		while(true){
 			if((v = Controller.varSym.searchSymbol(tokens[tIndex])) != null /*TODO Check whether token is a number*/){
 				expString = searchExpression();
-				code.setCodeText("while(" + expString + ")");
+				if(words.get(wordLoc).indexOf("until") != -1)
+					code.setCodeText("while(!(" + expString + "))");
+				else
+					code.setCodeText("while(" + expString + ")");
 				code.setErrCode(IErrorCodes.SUCCESS);
 				code.setErrParam(null);
 				break;
@@ -299,7 +276,10 @@ public class LoopHandler {
 			if((f = Controller.funSym.searchSymbol(tokens[tIndex])) != null){
 				int tempIndex = input.indexOf(tokens[tIndex]);
 				expString = exp.generateExpression(input.substring(tempIndex));
-				code.setCodeText("while(" + expString + ")");
+				if(words.get(wordLoc).indexOf("until") != -1)
+					code.setCodeText("while(!(" + expString + "))");
+				else
+					code.setCodeText("while(" + expString + ")");
 				code.setErrCode(IErrorCodes.SUCCESS);
 				code.setErrParam(null);
 				break;
@@ -314,3 +294,35 @@ public class LoopHandler {
 	private void do_while_loop(){		
 	}
 }
+
+/*
+Expression Extraction code:
+===========================
+expString = tokens[tIndex];
+tIndex++;
+if(tokens[tIndex].equalsIgnoreCase("from"))
+	tokens[tIndex] = "equal to";
+tempStr = searchOperator(tIndex);
+if(tempStr != null){ 				// If next token is operator
+	expString = " " + tempStr;
+	flag = true;
+	while(true){
+		//index = tIndex;
+		if((tempStr = searchOperator(tIndex)) != null){
+			flag = true;
+			expString = " " + tempStr;	// Note: tIndex automatically incremented by searchOperator() method
+		}
+		else
+		if(Controller.varSym.searchSymbol(tokens[tIndex])!= null || Controller.funSym.searchSymbol(tokens[tIndex]) != null){
+			if(flag == true){
+				flag = false;								
+				expString += " " + tokens[tIndex];
+				tIndex++;
+			}
+			else
+				break;
+		}
+		else
+			break;
+	}					
+}*/
